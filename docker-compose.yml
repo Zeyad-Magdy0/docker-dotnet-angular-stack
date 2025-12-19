@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+
+  frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - "8080:80"
+    container_name: frontend
+    depends_on:
+      - backend
+    networks:
+      - frontend-net
+
+  backend:
+    build: 
+      context: ./backend
+    container_name: backend
+
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=appdb;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=True;TrustServerCertificate=True;"
+      Redis__Host: "redis"
+      Redis__Port: "6379"
+
+    depends_on:
+      - db
+      - redis
+    networks:
+      - frontend-net
+      - backend-net
+
+  redis:
+    image: redis:7
+    container_name: redis
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+    - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - backend-net
+    
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+
+    volumes:
+      - ./db/init.sql:/init.sql
+
+    command: >
+      bash -c "
+      /opt/mssql/bin/sqlservr &
+      sleep 25 &&
+      /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -i /init.sql &&
+      wait
+      "
+
+    networks:
+      - backend-net
+
+
+networks:
+  frontend-net:
+    driver: bridge
+
+  backend-net:
+    driver: bridge
+    internal: true
+  

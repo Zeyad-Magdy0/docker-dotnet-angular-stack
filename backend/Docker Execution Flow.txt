@@ -1,0 +1,35 @@
+Multi-Stage Docker file
+
+Build-Stage:
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
+Dependencies stored in backend.csproj
+Copy dependency file into current working directory 
+and then run dotnet restore which runs and install all the dependencies needed
+
+[That way, dependencies rarely change, so we don't use COPY  . . because if smth in the file changes rebuild ] [ Allows docker caching]
+
+Run dotnet publish -c Release -o /app/publish
+
+Run dotnet files and build according to release standard and push compiled files ready to run in /app/publish
+
+AS build:
+Temporary image, created during build a frozen snapshot, used until the final image form is created and then all the previous stages are deleted only the final stage remains
+
+Runtime:
+
+
+# Copy published output from build stage
+COPY --from=build /app/publish .
+
+Copy only the runnable executable files, to discard of the build components and only keep runtime needs
+- Smaller image -Higher security
+
+
+# Start the application
+ENTRYPOINT ["dotnet", "Backend.dll"]     
+
+To start .NET apps: dotnet backend.dll
+
+backend.dll is a file created during run dotnet publish

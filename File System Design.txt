@@ -1,0 +1,22 @@
+Filesystem Design:
+
+docker-dotnet-angular-sql/
+│
+├── docker-compose.yml
+│
+├── backend/
+│   ├── Dockerfile
+│   ├── Program.cs
+│   ├── appsettings.json
+│   └── Backend.csproj
+│
+├── frontend/
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── dist/
+│       └── index.html
+│
+├── redis/
+│   └── redis.conf       
+└── db/
+    └── init.sql

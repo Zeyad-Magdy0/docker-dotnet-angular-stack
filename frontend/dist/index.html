@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular Frontend</title>
+</head>
+<body>
+
+<h1>Angular Frontend (Static)</h1>
+<p>This page is served by NGINX.</p>
+
+<button onclick="loadData()">Load Data from Backend</button>
+
+<pre id="output"></pre>
+
+<script>
+    function loadData() {
+        fetch('/api/data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerText =
+                    JSON.stringify(data, null, 2);
+            })
+            .catch(err => {
+                document.getElementById('output').innerText =
+                    'Error: ' + err;
+            });
+    }
+</script>
+
+</body>
+</html>

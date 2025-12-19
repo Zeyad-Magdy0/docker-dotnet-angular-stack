@@ -1,0 +1,41 @@
+docker build
+  ├─ Angular compilation (ng build)
+  ├─ Output: static files
+  └─ Files copied into NGINX image
+
+docker run
+  ├─ NGINX starts
+  ├─ No compilation
+  ├─ Only file reads + proxying
+
+Browser request
+  ├─ NGINX reads files
+  ├─ Browser executes JS
+  └─ Browser calls backend APIs
+
+Angular: [ Not an actual container or service ]
+
+Angular is code at build time, 
+files at runtime stored in nginx image filesystem,
+and JavaScript in the browser at client side. 
+
+
+Nginx:
+
+Serve Angular compiled files
+Act as Reverse Proxy, sending API calls to back-end and delivering the results back to the client
+
+Backend:
+Handles API Calls
+Communicates With Cache over A TCP Connection on Port: 6379
+Communicates with DB over A TCP Connection on Port: 1433
+
+Retrieve Info from Cache/DB:
+- On cache-hit, retrieve info from cache quickly and return it
+- On cache-miss, Retrieve info from DB, Update cache with it, return it
+
+Re
+
+DB:
+Store data
+Read/Write Information from it
